@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>UTAU character.txt 生成器</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            padding: 40px 20px;
+            background-color: #f0f2f5; 
+            color: #333;
+        }
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            width: 100%;
+            max-width: 380px; 
+        }
+        h2 { text-align: center; margin-top: 0; color: #1a1a1a; font-size: 20px; margin-bottom: 25px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #555; }
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid #dcdfe6; 
+            border-radius: 6px; 
+            font-size: 14px;
+        }
+        input:focus { border-color: #007aff; outline: none; box-shadow: 0 0 0 2px rgba(0,122,255,0.1); }
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #007aff; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600; 
+            margin-top: 15px; 
+        }
+        button:hover { background-color: #0063cc; }
+        button:active { background-color: #0056b3; }
+        .footer-note { 
+            margin-top: 25px; 
+            padding-top: 15px; 
+            border-top: 1px solid #eee; 
+            text-align: center; 
+            font-size: 12px; 
+            color: #888; 
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>UTAU character.txt 生成器</h2>
+    
+    <div class="input-group">
+        <label>名字 (name)</label>
+        <input type="text" id="name" placeholder="请输入角色名字">
+    </div>
+
+    <div class="input-group">
+        <label>版本 (version)</label>
+        <input type="text" id="version" placeholder="如：1.00">
+    </div>
+
+    <div class="input-group">
+        <label>头像文件名 (image)</label>
+        <input type="text" id="image" placeholder="如：char.bmp">
+    </div>
+
+    <div class="input-group">
+        <label>采样文件名 (sample)</label>
+        <input type="text" id="sample" placeholder="如：sample.wav">
+    </div>
+
+    <div class="input-group">
+        <label>作者 (author)</label>
+        <input type="text" id="author" placeholder="作者名">
+    </div>
+
+    <div class="input-group">
+        <label>网页 (web)</label>
+        <input type="text" id="web" placeholder="网址">
+    </div>
+
+    <button id="dlBtn">生成并下载 character.txt</button>
+
+    <div class="footer-note">
+        默认导出编码为 <strong>UTF-8</strong><br>
+        提示：若在 UTAU 中显示乱码，请用记事本打开后另存为 ANSI 编码。
+    </div>
+</div>
+
+<script>
+document.getElementById('dlBtn').onclick = function() {
+    const name = document.getElementById('name').value;
+    
+    if (!name) {
+        alert("“名字”是必填项哦！");
+        return;
+    }
+
+    // 字段
+    const fields = ['name', 'version', 'image', 'sample', 'author', 'web'];
+    let content = "";
+    
+    fields.forEach(function(field) {
+        const val = document.getElementById(field).value;
+        // 换行
+        content += field + "=" + val + "\r\n";
+    });
+
+    // 创建 Blob
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    
+    // 兼容下载
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const a = document.createElement('a');
+        a.href = e.target.result;
+        a.download = 'character.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+    reader.readAsDataURL(blob);
+};
+</script>
+
+</body>
+</html>
