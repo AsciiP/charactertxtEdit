@@ -102,7 +102,7 @@
 
 <script>
 document.getElementById('dlBtn').onclick = function() {
-    const name = document.getElementById('name').value;
+    const name = document.getElementById('name').value.trim();
     
     if (!name) {
         alert("“名字”是必填项哦！");
@@ -114,8 +114,11 @@ document.getElementById('dlBtn').onclick = function() {
     let content = "";
     
     fields.forEach(function(field) {
-        const val = document.getElementById(field).value;
-        // 换行
+        const val = document.getElementById(field).value.trim();
+        if (!val) {
+            return;
+        }
+        // 仅输出非空字段
         content += field + "=" + val + "\r\n";
     });
 
