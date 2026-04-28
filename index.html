@@ -21,6 +21,22 @@
             max-width: 380px; 
         }
         h2 { text-align: center; margin-top: 0; color: #1a1a1a; font-size: 20px; margin-bottom: 25px; }
+        .section-title {
+            margin: 0 0 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #4b5563;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .feature-block {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+            margin-bottom: 16px;
+        }
+
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #555; }
         input { 
@@ -61,7 +77,14 @@
 
 <div class="card">
     <h2>UTAU character.txt 生成器</h2>
-    
+
+    <div class="feature-block">
+        <div class="input-group" style="margin-bottom: 0;">
+            <label>从 character.txt 文件导入</label>
+            <input type="file" id="importFile" accept=".txt,text/plain">
+        </div>
+    </div>
+
     <div class="input-group">
         <label>名字 (name) ＊必填</label>
         <input type="text" id="name" placeholder="请输入角色名字">
@@ -101,6 +124,46 @@
 </div>
 
 <script>
+const fields = ['name', 'version', 'image', 'sample', 'author', 'web'];
+
+document.getElementById('importFile').addEventListener('change', function(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const text = ev.target.result || "";
+        const parsed = {};
+
+        text.split(/\r?\n/).forEach(function(line) {
+            const trimmed = line.trim();
+            if (!trimmed) {
+                return;
+            }
+
+            const sepIndex = trimmed.indexOf('=');
+            if (sepIndex === -1) {
+                return;
+            }
+
+            const key = trimmed.slice(0, sepIndex).trim();
+            const value = trimmed.slice(sepIndex + 1).trim();
+
+            if (fields.indexOf(key) !== -1) {
+                parsed[key] = value;
+            }
+        });
+
+        fields.forEach(function(field) {
+            document.getElementById(field).value = parsed[field] || "";
+        });
+    };
+
+    reader.readAsText(file, 'utf-8');
+});
+
 document.getElementById('dlBtn').onclick = function() {
     const name = document.getElementById('name').value.trim();
     
@@ -109,8 +172,6 @@ document.getElementById('dlBtn').onclick = function() {
         return;
     }
 
-    // 字段
-    const fields = ['name', 'version', 'image', 'sample', 'author', 'web'];
     let content = "";
     
     fields.forEach(function(field) {
